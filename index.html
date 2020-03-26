@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="description" content="Sort Visualizer">
+    <meta name="keywords" content="Sort,Visualizer,Quicksort,Mergesort">
+    <meta name="author" content="Darpan Pal">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sort Visualizer</title>
+
+    <link rel="stylesheet" href="style-sheets.css">
+    <link rel="icon" href="icons\love.png">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather|Montserrat|Sacramento" rel="stylesheet">
+
+  </head>
+
+  <body>
+    <div class="Container-Header">
+      <h1>Sort Visualizer</h1>
+    </div>
+    <div class="Container-Options">
+      <div class="New-Array">
+        <button class="New-Array_Button" id="New-Array_Buttonid">New Array</button>
+      </div>
+      <div class="Array-Size">
+        <label for="Array-Size_Meterid">Array Size</label>
+        <input type="range" class="Array-Size_Meter" id="Array-Size_Meterid" value="50" max="200" min="5">
+      </div>
+      <div class="Sort-Speed">
+        <label for="Sort-Speed_Meterid">Sort Speed</label>
+        <input type="range" class="Sort-Speed_Meter" id="Sort-Speed_Meterid" value="20" max="100" min="2">
+      </div>
+      <div class="Sorting-Algorithm">
+        <label for="Sorting-Algorithm_Dropid">Sorting Algorithm</label>
+        <form class="Sorting-Algorithm_Drop" id="Sorting-Algorithm_Dropid">
+          <select id="Sorting-Algorithm_Selectid" class="Sorting-Algorithm_Select" name="Algorithms">
+            <option value="insertionsort">Insertion Sort</option>
+            <option value="selectionsort">Selection Sort</option>
+            <option value="bubblesort">Bubble Sort</option>
+            </select>
+        </form>
+      </div>
+    </div>
+    <div class="Container-Canvas">
+      <canvas class= "Canvas" id="Canvas" width=1000 height=500></canvas>
+    </div>
+    <div class="Container-Sort">
+      <button class="Start-Sort_Button" id="Start-Sort_Buttonid">Start Sort</button>
+    </div>
+    <div class="Container-Footer">
+      <a class="Contact-Me_Button" href="mailto:darpanpal7@gmail.com">CONTACT ME</a>
+      <p class="Contact-Me_Text">© 2020 Darpan Pal @ Sort Visualizer.</p>
+    </div>
+    <script src="script.js" charset="utf-8"></script>
+  </body>
+</html>
