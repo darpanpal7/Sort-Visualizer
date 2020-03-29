@@ -39,6 +39,15 @@ var canvasContext = myCanvas.getContext("2d");
 var defaultColor = colorPallete.unsorted;
 canvasContext.fillStyle = defaultColor;
 
+/*
+    'algos' object that conatins different algorithms for sorting
+*/
+var algos = {
+    "bubble" : bubblesort,
+    "selection" : selectionsort,
+    "insertion" : insertionsort
+};
+
 
 //Helper Functions
 //============================================================================================
@@ -128,15 +137,15 @@ function revertColor(pos) {
     canvasContext.fillRect(pos*elementWidth,0,elementWidth-gap,elem);
 }
 
-function colorWhole(state,size) {
+function colorWhole(state) {
     //changes color of whole canvas according to state
-    for (i = 0;i < size; i++)
+    for (i = 0;i < canvasArray.length; i++)
         changeColor(i,state);
 }
 
-function revertWhole(size) {
+function revertWhole() {
     //reverting color of whole canvas to the default value
-    for (i = 0;i < size; i++)
+    for (i = 0;i < canvasArray.length; i++)
         revertColor(i);
 }
 
@@ -175,82 +184,78 @@ function swap(pos1, pos2) {
     swapArray(pos1, pos2);
 }
 
+async function comp(pos1, pos2) {
+    // comparator function two compare two elements
+    changeColor(pos1,colorPallete.process);
+    changeColor(pos2,colorPallete.process);
+
+    var speed = sortSpeed.max - sortSpeed.value;
+    var elem1 = canvasArray[pos1];
+    var elem2 = canvasArray[pos2];
+
+    await sleep(speed);
+
+    if(elem1 > elem2){
+        swap(pos1,pos2);
+        changeColor(pos1,colorPallete.swap); changeColor(pos2,colorPallete.swap);
+        await sleep(speed);
+    }
+    revertColor(pos1); revertColor(pos2);
+}
+
 
 //Sorting Algorithms
 //============================================================================================
 
-
 async function bubblesort() {
     //Bubble Sort
     var size = canvasArray.length; //size of the array
-    var speed = sortSpeed.value;   //speed of delay
+    var speed = sortSpeed.max-sortSpeed.value;   //speed of delay
 
-    for(i = 0; i < size-1; i++){
-        for(j = 0; j < size-1-i; j++){
-            if(canvasArray[j]>canvasArray[j+1]){
-                swap(j,j+1);
-                changeColor(j,colorPallete.swap); changeColor(j+1,colorPallete.swap);
-                await sleep(speed);
-                revertColor(j); revertColor(j+1);
-            }
-            else{
-                changeColor(j,colorPallete.process); changeColor(j+1,colorPallete.process);
-                await sleep(speed);
-                revertColor(j); revertColor(j+1);
-            }
+    for (i = 0;i < size-1; i++){
+        for (j = 0; j < size-1-i; j++){
+            await comp(j,j+1);
         }
-        changeColor(size-i-1,colorPallete.sorted);
+        changeColor(j,colorPallete.sorted);
     }
     changeColor(0,colorPallete.sorted);
-    await sleep(10*speed); //delaying some more
-    revertWhole(size);     //reverting to default
+    await sleep((10*speed));
+    revertWhole();
 }
 
 async function selectionsort() {
     //Selection Sort
     var size = canvasArray.length; //size of array
-    var speed = sortSpeed.value;   //speed of delay
+    var speed = sortSpeed.max-sortSpeed.value;   //speed of delay
 
     for(i = 0; i < size; i++) {
         for(j = i+1; j < size; j++) {
-            if(canvasArray[i]>canvasArray[j]){
-                swap(i,j);
-                changeColor(i,colorPallete.swap); changeColor(j,colorPallete.swap);
-                await sleep(speed);
-                revertColor(i); revertColor(j);
-            }
-            else{
-                changeColor(i,colorPallete.process); changeColor(j,colorPallete.process);
-                await sleep(speed);
-                revertColor(i); revertColor(j);
-            }
+            await comp(i,j);
         }
         changeColor(i,colorPallete.sorted);
     }
-    await sleep(10*speed); //delaying some more
-    revertWhole(size);     //reverting to default
+    await sleep((10*speed)); //delaying some more
+    revertWhole();     //reverting to default
 }
 
 async function insertionsort() {
     // Insertion Sort
     var size = canvasArray.length; //size of array
-    var speed = sortSpeed.value;   //speed of delay
+    var speed = sortSpeed.max-sortSpeed.value;   //speed of delay
 
     for(i = 1; i < size; i++){
         for(j = i; j>0&&canvasArray[j] < canvasArray[j-1]; j--){
-                swap(j,j-1);
-                changeColor(j,colorPallete.swap); changeColor(j-1,colorPallete.swap);
-                await sleep(speed);
-                revertColor(j); revertColor(j-1);
+                await comp(j-1,j);
         }
         changeColor(i,colorPallete.process); changeColor(j,colorPallete.process);
         await sleep(speed);
         revertColor(i); revertColor(j);
     }
-    colorWhole(colorPallete.sorted,size); //all elements sorted
+    colorWhole(colorPallete.sorted); //all elements sorted
     await sleep(1000);  //delaying some more
-    revertWhole(size);  //reverting to default
+    revertWhole();  //reverting to default
 }
+
 
 function sort() {
     /*
@@ -258,13 +263,7 @@ function sort() {
         and calls the sorting fucntion accordingly
     */
     var algorithm = sortAlgorithm.value;
-
-    if (algorithm == "bubblesort")
-        bubblesort();
-    else if (algorithm == "selectionsort")
-        selectionsort();
-    else
-        insertionsort();
+    algos[algorithm]();
  }
 
 
