@@ -45,7 +45,8 @@ canvasContext.fillStyle = defaultColor;
 var algos = {
     "bubble" : bubblesort,
     "selection" : selectionsort,
-    "insertion" : insertionsort
+    "insertion" : insertionsort,
+    "shell" : shellsort
 };
 
 
@@ -81,7 +82,6 @@ function initCanvas(){
         Function that initializes canvas with random height bars,
         uses 'randomArray' function to take an array with random values
     */
-
     var size = arraySize.value; //input from the 'arraySize' meter
 
     canvasContext.clearRect(0,0,canvasWidth,canvasHeight);
@@ -98,6 +98,23 @@ function initCanvas(){
 
     canvasArray = array;
     return array;
+}
+
+function setCanvasElem(pos, ht) {
+    /*
+        Function that set the canvas element
+        at position 'pos' to height 'ht'
+    */
+    var size = arraySize.value; //input from the 'arraySize' meter
+
+    canvasContext.clearRect(pos*elementWidth,0,elementWidth,canvasHeight);
+
+    //calculating width and gap for canvas
+    elementWidth = Math.floor(canvasWidth/size);
+    gap = Math.floor((elementWidth/100)*20);
+
+    canvasContext.fillStyle = defaultColor;
+    canvasContext.fillRect(pos*elementWidth,0,elementWidth-gap,ht);
 }
 
 function changeColor(pos,state) {
@@ -135,6 +152,12 @@ function revertColor(pos) {
 
     //filling with default value
     canvasContext.fillRect(pos*elementWidth,0,elementWidth-gap,elem);
+}
+
+function colorRange(pos1,pos2,state) {
+    //changes color of range canvas according to state
+    for(i = pos1; i <= pos2; i++)
+        changeColor(i,state);
 }
 
 function colorWhole(state) {
@@ -256,6 +279,28 @@ async function insertionsort() {
     revertWhole();  //reverting to default
 }
 
+async function shellsort() {
+    //Shell Sort
+    var size = canvasArray.length; //size of array
+    var speed = sortSpeed.max-sortSpeed.value;   //speed of delay
+
+    for (var gap = Math.floor(size/2); gap > 0; gap = Math.floor(gap/2)) {
+        for (var i = gap; i < size; i += 1) {
+            var temp = canvasArray[i];
+            for (var j = i; j >= gap && canvasArray[j-gap] > temp; j = j-gap) {
+                await comp(j-gap, j);
+            }
+            setCanvasElem(j,temp);
+            canvasArray[j] = temp;
+            changeColor(j,colorPallete.process);
+            await sleep(speed);
+            revertColor(j);
+        }
+    }
+    colorWhole(colorPallete.sorted); //all elements sorted
+    await sleep(1000);  //delaying some more
+    revertWhole();  //reverting to default
+}
 
 function sort() {
     /*
