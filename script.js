@@ -45,8 +45,7 @@ canvasContext.fillStyle = defaultColor;
 var algos = {
     "bubble" : bubblesort,
     "selection" : selectionsort,
-    "insertion" : insertionsort,
-    "shell" : shellsort
+    "insertion" : insertionsort
 };
 
 
